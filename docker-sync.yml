@@ -1,0 +1,11 @@
+version: '2'
+
+options:
+    compose-file-path: './docker-compose.yml'
+    compose-dev-file-path: './docker-compose-dev.yml'
+    verbose: true # make the whole sync verbose, debug purpose
+
+syncs:
+    myapp_sync:
+        src: './'
+        sync_excludes: ['node_modules', '.gitignore', '.git', 'var/cache', '.idea', '.docker-sync']

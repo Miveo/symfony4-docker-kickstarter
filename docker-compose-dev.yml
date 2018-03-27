@@ -1,0 +1,34 @@
+version: "3"
+
+services:
+    nginx:
+        volumes:
+            - myapp_sync:/var/www/app:nocopy
+    php:
+        volumes:
+            - myapp_sync:/var/www/app:nocopy
+    yarn:
+        # Watch instead of build in dev mode.
+        command: bash -c "yarn install && yarn watch"
+        volumes:
+            - myapp_sync:/var/www/app:nocopy
+    db:
+        volumes:
+            - pgdata:/var/lib/postgresql/data
+
+    # An handy ready-to-use mailcatcher, only in dev.
+    # https://hub.docker.com/r/jderusse/mailcatcher/
+    mailcatcher:
+        image: jderusse/mailcatcher
+        networks:
+            - master
+        ports:
+            - 8080:80
+
+volumes:
+    # Handle by docker-sync
+    myapp_sync:
+        external: true
+    # named local volume to persist postgres data if rebuild container (eg: change postgres version)
+    pgdata:
+        driver: local

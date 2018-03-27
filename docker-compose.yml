@@ -1,0 +1,49 @@
+version: "3"
+
+services:
+    # https://hub.docker.com/_/nginx/
+    nginx:
+        image: nginx:1.13-alpine
+        ports:
+            - "80:80"
+        volumes:
+            - ./.docker-conf/nginx.conf:/etc/nginx/conf.d/site.conf
+        networks:
+            - master
+
+    # https://hub.docker.com/r/miveo/centos-php-fpm/
+    php:
+        image: miveo/centos-php-fpm:7.2-no-xdebug
+        working_dir: /var/www/app/
+        tty: true
+        volumes:
+            - ./.docker-conf/php.ini:/etc/php.d/99-app.ini
+        env_file:
+            - .env
+        networks:
+            - master
+
+    # https://hub.docker.com/r/kkarczmarczyk/node-yarn/
+    yarn:
+        image: kkarczmarczyk/node-yarn:8.0-slim
+        working_dir: /var/www/app/
+        command: bash -c "yarn install && yarn build"
+        networks:
+            - master
+
+    # https://hub.docker.com/_/postgres/
+    db:
+        image: postgres:9.6-alpine
+        environment:
+            - POSTGRES_USER=${DATABASE_USER}
+            - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+            - POSTGRES_DB=${DATABASE_NAME}
+            - POSTGRES_PORT=${DATABASE_PORT}
+        networks:
+            - master
+        ports:
+            - 5432:5432
+
+# specify a project's unique network to avoid conflict
+networks:
+    master:
