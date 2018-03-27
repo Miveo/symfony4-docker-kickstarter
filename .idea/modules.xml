@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="ProjectModuleManager">
-    <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/symfony4-docker-kickstarter.iml" filepath="$PROJECT_DIR$/.idea/symfony4-docker-kickstarter.iml" />
-    </modules>
-  </component>
-</project>
