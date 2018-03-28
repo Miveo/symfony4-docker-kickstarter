@@ -1,5 +1,4 @@
 #!make
-include .env
 
 .DEFAULT_GOAL := help
 .PHONY: help
@@ -9,28 +8,28 @@ help:
 
 .PHONY: install
 install: ## Run sync, start containers and run doctrine migration as assets install
-	@docker-sync start
-	@docker-compose up -d
-	@docker-compose exec php composer install
+	-docker-sync start
+	docker-compose up -d
+	docker-compose exec php composer self-update --no-interaction
+	docker-compose exec php composer install --no-interaction
 	docker-compose exec php bin/console doctrine:migration:migrate --allow-no-migration --no-interaction
-	@docker-compose exec php bin/console assets:install --symlink --relative
-	@docker-compose exec php rm -Rf var/cache/
-	@docker-compose exec php bin/console cache:warmup
+	docker-compose exec php bin/console assets:install --symlink --relative
+	docker-compose exec php rm -Rf var/cache/
+	docker-compose exec php bin/console cache:warmup
 
 .PHONY: purge
 purge: ## Purge all containers and associated volumes
-	@docker-sync stop
-	@docker-sync-stack clean
-	@docker-compose down
+	-docker-sync stop
+	docker-sync-stack clean
 
 .PHONY: server_start
 server_start: ## Run docker stack and sync
-	@docker-sync start
-	@docker-compose up -d
+	-docker-sync start
+	docker-compose up -d
 
 .PHONY: server_stop
 server_stop: ## Stop sync and docker stack
-	@docker-compose stop
+	-docker-compose stop
 	@docker-sync stop
 
 .PHONY: new_migration

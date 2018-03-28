@@ -6,6 +6,6 @@ options:
     verbose: true # make the whole sync verbose, debug purpose
 
 syncs:
-    myapp_sync:
+    ${COMPOSE_PROJECT_NAME}_sync:
         src: './'
         sync_excludes: ['node_modules', '.gitignore', '.git', 'var/cache', '.idea', '.docker-sync']

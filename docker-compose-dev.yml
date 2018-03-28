@@ -1,17 +1,24 @@
-version: "3"
+version: "3.5"
 
 services:
-    nginx:
+    www:
+        command: sh -c "envsubst '$$NGINX_HOST' < /etc/nginx/conf.d/site.template > /etc/nginx/conf.d/site.conf && nginx -g 'daemon off;'"
+        environment:
+            - NGINX_HOST=${COMPOSE_PROJECT_NAME}.docker
         volumes:
-            - myapp_sync:/var/www/app:nocopy
+            - source_sync:/var/www/app:nocopy
+            - ./.docker-conf/nginx-dev.conf:/etc/nginx/conf.d/site.template
     php:
+        working_dir: /var/www/app/
+        env_file: .env
         volumes:
-            - myapp_sync:/var/www/app:nocopy
+            - source_sync:/var/www/app:nocopy
+            - ./.docker-conf/php.ini:/etc/php.d/99-app.ini
     yarn:
-        # Watch instead of build in dev mode.
-        command: bash -c "yarn install && yarn watch"
+        working_dir: /var/www/app/
+        command: bash -c "yarn install && yarn watch" # Watch instead of build in dev mode.
         volumes:
-            - myapp_sync:/var/www/app:nocopy
+            - source_sync:/var/www/app:nocopy
     db:
         volumes:
             - pgdata:/var/lib/postgresql/data
@@ -20,14 +27,13 @@ services:
     # https://hub.docker.com/r/jderusse/mailcatcher/
     mailcatcher:
         image: jderusse/mailcatcher
-        networks:
-            - master
         ports:
             - 8080:80
 
 volumes:
     # Handle by docker-sync
-    myapp_sync:
+    source_sync:
+        name: ${COMPOSE_PROJECT_NAME}_sync # docker-sync do not use the compose project name by default, so we do.
         external: true
     # named local volume to persist postgres data if rebuild container (eg: change postgres version)
     pgdata:
