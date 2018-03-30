@@ -11,7 +11,5 @@ A Symfony 4 fresh installed project with a fully operational **docker-compose** 
  * Add a rule in your hosts file to reach the `{COMPOSE_PROJECT_NAME}.docker` domain. For example `myapp.docker     127.0.0.1` 
  
  
- 
-Here is a blog article (in french) which make a detailled presentation of this stack:  
-https://steakoverflow.blog/presentation-environnement-symfony4-environnement-docker-sync/
+
  
