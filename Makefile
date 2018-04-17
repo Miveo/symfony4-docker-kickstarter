@@ -14,8 +14,9 @@ install: ## Run sync, start containers and run doctrine migration as assets inst
 	docker-compose exec php composer install --no-interaction
 	docker-compose exec php bin/console doctrine:migration:migrate --allow-no-migration --no-interaction
 	docker-compose exec php bin/console assets:install --symlink --relative
-	docker-compose exec php rm -Rf var/cache/
+	docker-compose exec php rm -Rf var/cache
 	docker-compose exec php bin/console cache:warmup
+	docker-compose exec php chmod -R 777 var
 
 .PHONY: purge
 purge: ## Purge all containers and associated volumes
